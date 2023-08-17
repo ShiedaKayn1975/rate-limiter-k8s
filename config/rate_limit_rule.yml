@@ -1,7 +1,0 @@
-domain: request
-descriptors:
-  -key: request_type
-  value: push_product
-  rate_limit:
-    unit: minutes
-    request_per_minutes: 5
