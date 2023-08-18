@@ -1,0 +1,62 @@
+require: rubocop-rails
+
+AllCops:
+  NewCops: enable
+  DisabledByDefault: false
+  Include:
+    - "app/**/*"
+    - "lib/**/*"
+  Exclude:
+    - "bin/*"
+    - "config/**/*"
+    - "db/**/*"
+    - "app/views/**/*"
+    - "test/**/*"
+    - "vendor/bundle/**/*"
+
+Layout/LineLength:
+  Max: 120
+
+Metrics:
+  Enabled: false
+
+Style/MethodDefParentheses:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/LambdaCall:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+# Style/StringLiterals:
+#   EnforcedStyle: single-quotes
+
+Rails/Output:
+  Enabled: false
+Rails/WhereExists:
+  Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
+Style/SafeNavigation:
+  Enabled: false
+Naming/VariableName:
+  Enabled: false
+Style/MultilineIfModifier:
+  Enabled: false
+Naming/BlockParameterName:
+  Enabled: false

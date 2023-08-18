@@ -1,8 +1,22 @@
 module Limiter
   extend ActiveSupport::Concern
 
-  def check_limitation
-    token_bucket = TokenBucketManager.new(request.remote_ip)
-    token_bucket.check_rate_limitation_with_ip_address
+  def check_limitation_ip_address
+    token_bucket = TokenBucketManager.for_domain('client')
+    token_bucket.with_resource(current_resource).with_method(current_method).with_ip_address(request.remote_ip).check_rate_limitation_with_ip_address
+  rescue TokenBucket::TooManyRequestsError => ex
+    render json: {
+      detail: ex.message
+    }, status: :too_many_requests
+  end
+
+  private
+
+  def current_method
+    params[:action]
+  end
+
+  def current_resource
+    request.path.split('/').last
   end
 end
