@@ -1,5 +1,5 @@
 class TokenBucketManager
-  RULE_FILE_PATH = 'config/rate_limit_rule.yaml'
+  RULE_FILE_PATH = 'config/rate_limit_rule.yaml'.freeze
 
   def initialize resource_rules, domain
     @resource_rules = resource_rules
@@ -33,10 +33,10 @@ class TokenBucketManager
 
   def check_rate_limitation_with_ip_address
     resource = @resource_rules.find { |r| r['name'] == @resource }
-    return unless resource.present?
+    return if resource.blank?
 
     action = resource['actions'].find { |ac| ac['action'] == @method }
-    return unless action.present?
+    return if action.blank?
 
     config = {
       resource_name: resource['name'],
@@ -65,22 +65,23 @@ class TokenBucket
   def consume ip_address
     @lock.synchronize do
       data = refill_tokens(ip_address)
-      raise TooManyRequestsError.new("Too many requests") if data[:tokens].zero?
+      raise TooManyRequestsError, 'Too many requests' if data[:tokens].zero?
+
       data[:tokens] = data[:tokens] - 1
       Rails.cache.write([@domain, @resource_name, @method, @key, ip_address], data)
     end
   end
 
-  class TooManyRequestsError < StandardError;end
+  class TooManyRequestsError < StandardError; end
 
   private
 
   def refill_tokens ip_address
     value = Rails.cache.read([@domain, @resource_name, @method, @key, ip_address])
 
-    unless value.present?
+    if value.blank?
       value = {
-        last_refill_time: Time.now,
+        last_refill_time: Time.zone.now,
         tokens: @request_per_unit
       }
 
@@ -89,9 +90,8 @@ class TokenBucket
     end
 
     Rails.cache.write([@domain, @resource_name, @method, @key, ip_address],
-                      value) if value[:last_refill_time] + 1.send(@unit) < Time.now
-    
-        
+                      value) if value[:last_refill_time] + 1.send(@unit) < Time.zone.now
+
     value
   end
 end

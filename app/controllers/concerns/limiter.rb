@@ -3,10 +3,12 @@ module Limiter
 
   def check_limitation_ip_address
     token_bucket = TokenBucketManager.for_domain('client')
-    token_bucket.with_resource(current_resource).with_method(current_method).with_ip_address(request.remote_ip).check_rate_limitation_with_ip_address
-  rescue TokenBucket::TooManyRequestsError => ex
+    token_bucket.with_resource(current_resource)
+                .with_method(current_method)
+                .with_ip_address(request.remote_ip).check_rate_limitation_with_ip_address
+  rescue TokenBucket::TooManyRequestsError => e
     render json: {
-      detail: ex.message
+      detail: e.message
     }, status: :too_many_requests
   end
 
