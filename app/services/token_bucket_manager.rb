@@ -79,18 +79,15 @@ class TokenBucket
   def refill_tokens ip_address
     value = Rails.cache.read([@domain, @resource_name, @method, @key, ip_address])
 
-    if value.blank?
-      value = {
-        last_refill_time: Time.zone.now,
-        tokens: @request_per_unit
-      }
+    new_value = {
+      last_refill_time: Time.zone.now,
+      tokens: @request_per_unit
+    }
 
-      Rails.cache.write([@domain, @resource_name, @method, @key, ip_address], value)
-      return value
+    if value.blank? || (value[:last_refill_time] + 1.send(@unit) < Time.zone.now)
+      Rails.cache.write([@domain, @resource_name, @method, @key, ip_address], new_value)
+      return new_value
     end
-
-    Rails.cache.write([@domain, @resource_name, @method, @key, ip_address],
-                      value) if value[:last_refill_time] + 1.send(@unit) < Time.zone.now
 
     value
   end
