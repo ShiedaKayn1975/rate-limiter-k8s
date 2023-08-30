@@ -1,24 +1,22 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+``` yaml
+# YAML
+rate_limit_rules:
+  - domain: client
+    resources:
+      - name: products
+        actions:
+          - action: index
+            descriptors:
+              key: ip_address
+              rate_limit:
+                unit: minutes
+                request_per_unit: 5
+          - action: create
+            descriptors:
+              key: ip_address
+              rate_limit:
+                unit: hours
+                request_per_unit: 10
+```
